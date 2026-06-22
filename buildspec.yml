@@ -30,12 +30,6 @@ phases:
       - aws eks update-kubeconfig --name dev-cluster --region ap-south-1
       - echo Replacing image placeholder...
       - sed -i "s|IMAGE_PLACEHOLDER|$REPO:$IMAGE_TAG|g" deployment.yaml
-      - echo Verifying deployment.yaml...
-      - cat deployment.yaml
-      - echo Deploying to EKS...
-      - kubectl apply -f deployment.yaml
-      - kubectl apply -f service.yaml
-      - kubectl rollout status deployment/brain-task-deployment
 
 artifacts:
   files:

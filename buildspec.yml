@@ -31,7 +31,6 @@ phases:
       - echo Replacing image placeholder...
       - sed -i "s|IMAGE_PLACEHOLDER|$REPO:$IMAGE_TAG|g" deployment.yaml
 
-
 artifacts:
   files:
     - deployment.yaml

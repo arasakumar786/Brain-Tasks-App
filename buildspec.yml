@@ -10,27 +10,28 @@ phases:
     commands:
       - echo Logging in to Docker Hub...
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - REPO=$DOCKER_USERNAME/brain-tasks-app
-      - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
 
   build:
     commands:
+      - REPO=$DOCKER_USERNAME/brain-tasks-app
+      - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
       - echo Building Docker image...
       - docker build -t $REPO:$IMAGE_TAG .
       - docker tag $REPO:$IMAGE_TAG $REPO:latest
 
   post_build:
     commands:
+      - REPO=$DOCKER_USERNAME/brain-tasks-app
+      - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
       - echo Pushing image to Docker Hub...
       - docker push $REPO:$IMAGE_TAG
       - docker push $REPO:latest
-
-      - echo Updating kubeconfig for EKS...
+      - echo Updating kubeconfig...
       - aws eks update-kubeconfig --name dev-cluster --region ap-south-1
-
-      - echo Updating image in deployment...
+      - echo Replacing image placeholder...
       - sed -i "s|IMAGE_PLACEHOLDER|$REPO:$IMAGE_TAG|g" deployment.yaml
-
+      - echo Verifying deployment.yaml...
+      - cat deployment.yaml
       - echo Deploying to EKS...
       - kubectl apply -f deployment.yaml
       - kubectl apply -f service.yaml

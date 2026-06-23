@@ -32,3 +32,4 @@ artifacts:
     - deployment.yaml
     - service.yaml
   discard-paths: yes
+

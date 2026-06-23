@@ -8,14 +8,12 @@ env:
 phases:
   pre_build:
     commands:
-      - echo Logging in to Docker Hub...
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
   build:
     commands:
       - REPO=$DOCKER_USERNAME/brain-tasks-app
       - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
-      - echo Building Docker image...
       - docker build -t $REPO:$IMAGE_TAG .
       - docker tag $REPO:$IMAGE_TAG $REPO:latest
 
@@ -25,13 +23,8 @@ phases:
       - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
       - docker push $REPO:$IMAGE_TAG
       - docker push $REPO:latest
-      - echo "Replacing IMAGE_PLACEHOLDER with $REPO:$IMAGE_TAG"
       - sed -i "s|IMAGE_PLACEHOLDER|$REPO:$IMAGE_TAG|g" deployment.yaml
-      - echo "Verifying replacement..."
       - cat deployment.yaml
-      - aws eks update-kubeconfig --name dev-cluster --region ap-south-1
-      - kubectl apply -f deployment.yaml
-      - kubectl apply -f service.yaml
 
 artifacts:
   files:

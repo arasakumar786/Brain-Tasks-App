@@ -21,13 +21,11 @@ phases:
     commands:
       - REPO=$DOCKER_USERNAME/brain-tasks-app
       - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
-      - echo "REPO=$REPO"
-      - echo "IMAGE_TAG=$IMAGE_TAG"
+      - docker push $REPO:$IMAGE_TAG
+      - docker push $REPO:latest
       - sed -i "s|IMAGE_PLACEHOLDER|$REPO:$IMAGE_TAG|g" deployment.yaml
       - echo "Updated deployment.yaml:"
       - cat deployment.yaml
-      - docker push $REPO:$IMAGE_TAG
-      - docker push $REPO:latest
 
 artifacts:
   files:

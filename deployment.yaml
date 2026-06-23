@@ -17,4 +17,3 @@ spec:
         image: IMAGE_PLACEHOLDER
         ports:
         - containerPort: 80
-

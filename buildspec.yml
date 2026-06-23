@@ -23,16 +23,18 @@ phases:
     commands:
       - REPO=$DOCKER_USERNAME/brain-tasks-app
       - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
-      - echo Pushing image to Docker Hub...
       - docker push $REPO:$IMAGE_TAG
       - docker push $REPO:latest
-      - echo Updating kubeconfig...
-      - aws eks update-kubeconfig --name dev-cluster --region ap-south-1
-      - echo Replacing image placeholder...
+      - echo "Replacing IMAGE_PLACEHOLDER with $REPO:$IMAGE_TAG"
       - sed -i "s|IMAGE_PLACEHOLDER|$REPO:$IMAGE_TAG|g" deployment.yaml
-
+      - echo "Verifying replacement..."
+      - cat deployment.yaml
+      - aws eks update-kubeconfig --name dev-cluster --region ap-south-1
+      - kubectl apply -f deployment.yaml
+      - kubectl apply -f service.yaml
 
 artifacts:
   files:
     - deployment.yaml
     - service.yaml
+  discard-paths: yes
